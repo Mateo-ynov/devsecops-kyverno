@@ -1,0 +1,77 @@
+ui:
+  enabled: true
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1234
+    runAsGroup: 1234
+    fsGroup: 1234
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1234
+    runAsGroup: 1234
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    privileged: false
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+plugin:
+  kyverno:
+    enabled: true
+
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1234
+      runAsGroup: 1234
+      fsGroup: 1234
+
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1234
+      runAsGroup: 1234
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      privileged: false
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+
+metrics:
+  enabled: true
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: monitoring
+  grafana:
+    namespace: monitoring
+    dashboards:
+      enabled: true
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1234
+  runAsGroup: 1234
+  fsGroup: 1234
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1234
+  runAsGroup: 1234
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  privileged: false
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault

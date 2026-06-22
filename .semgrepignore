@@ -1,0 +1,8 @@
+# Fichiers de démonstration volontairement non conformes
+demo/
+
+# Policies Kyverno : ce sont des règles de sécurité, pas des workloads applicatifs
+policies/
+
+# Fichiers locaux générés
+kubeconfig

@@ -4,3 +4,16 @@
 .terraform.lock.hcl
 kubeconfig
 *.log
+
+# Cosign local keys
+cosign.key
+cosign.pub
+
+# Local kubeconfig
+kubeconfig
+
+# Terraform local files
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup

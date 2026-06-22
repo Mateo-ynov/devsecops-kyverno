@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-good
+  namespace: demo
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+    - name: devsecops-app
+      image: devsecops-kyverno-app:1.0
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 8080
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL

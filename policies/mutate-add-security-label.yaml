@@ -1,0 +1,20 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: mutate-add-security-label
+  annotations:
+    policies.kyverno.io/title: Add Security Label
+    policies.kyverno.io/category: Governance
+spec:
+  rules:
+    - name: add-security-label
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              security.devsecops.io/managed: "true"

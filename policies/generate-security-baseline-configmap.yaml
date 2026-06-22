@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: generate-security-baseline-configmap
+  annotations:
+    policies.kyverno.io/title: Generate Security Baseline ConfigMap
+    policies.kyverno.io/category: Governance
+spec:
+  rules:
+    - name: generate-security-baseline
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+      generate:
+        apiVersion: v1
+        kind: ConfigMap
+        name: security-baseline
+        namespace: "{{request.object.metadata.name}}"
+        synchronize: true
+        data:
+          data:
+            baseline: "devsecops"
+            owner: "security-team"
+            description: "Namespace monitored by Kyverno security baseline"

@@ -1,0 +1,21 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: mutate-seccomp
+  annotations:
+    policies.kyverno.io/title: Add Seccomp RuntimeDefault
+    policies.kyverno.io/category: Pod Security
+spec:
+  rules:
+    - name: add-seccomp-runtime-default
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      mutate:
+        patchStrategicMerge:
+          spec:
+            securityContext:
+              seccompProfile:
+                type: RuntimeDefault

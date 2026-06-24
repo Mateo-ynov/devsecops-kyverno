@@ -1,0 +1,338 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devsecops-overview-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  devsecops-overview.json: |-
+    {
+        "uid": "devsecops-overview",
+        "title": "DevSecOps Overview - Kubernetes & Kyverno",
+        "tags": [
+            "devsecops",
+            "kubernetes",
+            "kyverno"
+        ],
+        "timezone": "browser",
+        "schemaVersion": 39,
+        "version": 1,
+        "refresh": "10s",
+        "panels": [
+            {
+                "type": "stat",
+                "title": "CPU cluster utilisé",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "percent"
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            {
+                "type": "stat",
+                "title": "RAM utilisée",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "percent"
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 6,
+                    "y": 0
+                }
+            },
+            {
+                "type": "gauge",
+                "title": "Disque disponible",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "100 * sum(node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\"}) / sum(node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"})",
+                        "instant": true,
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "percent",
+                        "min": 0,
+                        "max": 100,
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "red",
+                                    "value": null
+                                },
+                                {
+                                    "color": "orange",
+                                    "value": 20
+                                },
+                                {
+                                    "color": "green",
+                                    "value": 50
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 12,
+                    "y": 0
+                },
+                "options": {
+                    "reduceOptions": {
+                        "values": false,
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": ""
+                    },
+                    "orientation": "auto",
+                    "showThresholdLabels": false,
+                    "showThresholdMarkers": true
+                }
+            },
+            {
+                "type": "stat",
+                "title": "Pods dans le cluster",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "count(kube_pod_info)",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 18,
+                    "y": 0
+                }
+            },
+            {
+                "type": "stat",
+                "title": "Redémarrages containers - 1h",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "sum(increase(kube_pod_container_status_restarts_total[1h]))",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 0,
+                    "y": 4
+                }
+            },
+            {
+                "type": "stat",
+                "title": "Violations Kyverno",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "sum(policy_report_result{status=\"fail\"})",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 6,
+                    "y": 4
+                }
+            },
+            {
+                "type": "stat",
+                "title": "Policies en succès",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "sum(policy_report_result{status=\"pass\"})",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 12,
+                    "y": 4
+                }
+            },
+            {
+                "type": "stat",
+                "title": "ClusterPolicies générées OK",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "sum(cluster_policy_report_result{status=\"pass\"})",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 18,
+                    "y": 4
+                }
+            },
+            {
+                "type": "bargauge",
+                "title": "Résultats Kyverno par statut",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "sum by (status) (policy_report_result)",
+                        "legendFormat": "{{status}}",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 8
+                }
+            },
+            {
+                "type": "bargauge",
+                "title": "Violations par namespace",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "sum by (exported_namespace) (policy_report_result{status=\"fail\"})",
+                        "legendFormat": "{{exported_namespace}}",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 8
+                }
+            },
+            {
+                "type": "bargauge",
+                "title": "Violations par policy",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "sum by (policy) (policy_report_result{status=\"fail\"})",
+                        "legendFormat": "{{policy}}",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 16
+                }
+            },
+            {
+                "type": "timeseries",
+                "title": "Évolution des résultats Kyverno",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "sum by (status) (policy_report_result)",
+                        "legendFormat": "{{status}}",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 16
+                }
+            },
+            {
+                "type": "table",
+                "title": "Détail des ressources non conformes",
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "targets": [
+                    {
+                        "expr": "policy_report_result{status=\"fail\"}",
+                        "format": "table",
+                        "instant": true,
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "h": 10,
+                    "w": 24,
+                    "x": 0,
+                    "y": 24
+                }
+            }
+        ]
+    }
